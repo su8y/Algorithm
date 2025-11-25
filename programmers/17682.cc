@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cctype>
+#include <sstream>
 
 using namespace std;
 
@@ -16,20 +17,15 @@ int solution(string s) {
     vector<int> v;
     v.push_back(0);
     
-    for(int i=0; i<s.size(); i++){
-        if(isdigit(s[i])) {
-            int ed = 1;
-            while(isdigit(s[i + ed])) {
-                ed++;
-            }
-            string ss = s.substr(i, ed);
-            
-            i += ed -1;
-            v.push_back(stoi(ss));
-            continue;
-        }
-        
-        switch (s[i]) {
+    int num;
+    char bonus;
+    char option;
+    istringstream is(s);
+
+    while(is >> num) {
+        v.push_back(num);
+        bonus = is.get();
+        switch (bonus) {
             case 'S': break;
             case 'D': 
                 v[v.size()-1] = pow(v[v.size()-1],2);
@@ -37,6 +33,14 @@ int solution(string s) {
             case 'T': 
                 v[v.size()-1] = pow(v[v.size()-1],3);
                 break;
+        }
+        option = is.get();
+        if(option != '*' && option != '#') {
+            is.unget();
+            continue;
+        }
+
+        switch (option){
             case '*': 
                 v[v.size()-1] *= 2;
                 v[v.size()-2] *= 2;
@@ -45,6 +49,7 @@ int solution(string s) {
                 v[v.size()-1] *= -1;
                 break;
         }
+
     }
     
     for(auto &e: v) {
