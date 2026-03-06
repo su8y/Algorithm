@@ -1,0 +1,39 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+		// GIVEN
+		var br = new BufferedReader(new InputStreamReader(System.in));
+
+		var st = new StringTokenizer(br.readLine());
+		int n = Integer.parseInt(st.nextToken());
+		int m = Integer.parseInt(st.nextToken());
+
+		int[][] graph = new int[n+1][m+1];
+
+		for (int i = 0; i < n; i++) {
+			st = new StringTokenizer(br.readLine());
+			for (int j = 0; j < m; j++) {
+				graph[i][j] = Integer.parseInt(st.nextToken());
+			}
+		}
+
+		// WHEN
+		int[][] cache = new int[n+1][m+1];
+
+		cache[0][0] = graph[0][0];
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				cache[i][j+1] = Math.max(cache[i][j+1], cache[i][j] + graph[i][j+1]);
+				cache[i+1][j] = Math.max(cache[i+1][j], cache[i][j] + graph[i+1][j]);
+				cache[i+1][j+1] = Math.max(cache[i+1][j+1], cache[i][j] + graph[i+1][j+1]);
+			}
+		}
+
+		// THEN
+		System.out.println(cache[n][m]);
+	}
+}
