@@ -5,50 +5,41 @@ import java.util.StringTokenizer;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		// INPUT
-		var br = new BufferedReader(new InputStreamReader(System.in));
-		int n = Integer.parseInt(br.readLine());
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int weightCount = Integer.parseInt(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int[] weights = new int[weightCount];
 
-		int[] w = new int[n+1];
-		var st = new StringTokenizer(br.readLine());
-		for(int i=1;i<=n;i++){
-			w[i] = Integer.parseInt(st.nextToken());
-		}
+        for (int i = 0; i < weightCount; i++) {
+            weights[i] = Integer.parseInt(st.nextToken());
+        }
 
+        boolean[] dp = new boolean[40_001];
 
+        dp[0] = true;
 
-		// SOLUTION
-		boolean[][] dp = new boolean[n+1][40001];
+        for (int weight : weights) {
+            for (int i = dp.length - 1; i >= weight; i--) {
+                dp[i] |= dp[i - weight];
+            }
+        }
 
-		for (int i=1;i<=n;i++){
-			int cur = w[i];
-			dp[i][cur] = true; // 현재 값
-			for(int j=1;j<40001;j++) {
-				dp[i][j] |= dp[i-1][j]; // 이전 값
+        for (int weight : weights) {
+            for (int i = 0; i < dp.length - weight; i++) {
+                dp[i] |= dp[i + weight];
+            }
+        }
 
-				if (dp[i-1][j]) {
-					if (j+cur <= 40000) dp[i][j + cur] = true;
-					if (Math.abs(j-cur) <= 40000) dp[i][Math.abs(j-cur)] = true;
-				}
-			}
+        int count = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
+        StringBuilder sb = new StringBuilder();
 
-		}
+        for (int i = 0; i < count; i++) {
+            int bead = Integer.parseInt(st.nextToken());
 
-		// THEN RETURN
-		int m = Integer.parseInt(br.readLine());
-		st = new StringTokenizer(br.readLine());
-		StringBuilder sb = new StringBuilder();
+            sb.append(dp[bead] ? 'Y' : 'N').append(" ");
+        }
 
-		for(int i=0;i<m;i++){
-			int req = Integer.parseInt(st.nextToken());
-			if(dp[n][req]) {
-				sb.append('Y');
-			} else {
-				sb.append('N');
-			}
-			if (i < m-1) sb.append(' ');
-		}
-
-		System.out.println(sb);
-	}
+        System.out.print(sb);
+    }
 }
